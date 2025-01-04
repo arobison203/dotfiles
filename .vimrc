@@ -4,3 +4,4 @@ set number
 set termguicolors
 syntax on
 colorscheme catppuccin
+set clipboard=unnamedplus
