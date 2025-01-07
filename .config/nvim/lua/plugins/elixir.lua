@@ -21,6 +21,19 @@ return {
     opts = {
       config = {
         tailwindcss = {
+          root_dir = function(fname)
+            local root_pattern = require("lspconfig").util.root_pattern(
+              "tailwind.config.mjs",
+              "tailwind.config.cjs",
+              "tailwind.config.js",
+              "tailwind.config.ts",
+              "postcss.config.js",
+              "config/tailwind.config.js",
+              "assets/tailwind.config.js",
+              "apps/**/assets/tailwind.config.js"
+            )
+            return root_pattern(fname)
+          end,
           init_options = {
             userLanguages = {
               heex = "html",
