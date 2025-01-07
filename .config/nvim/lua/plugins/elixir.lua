@@ -15,42 +15,37 @@ return {
       end
     end,
   },
-  {
-    "AstroNvim/astrolsp",
-    optional = false,
-    opts = {
-      config = {
-        tailwindcss = {
-          root_dir = function(fname)
-            local root_pattern = require("lspconfig").util.root_pattern(
-              "tailwind.config.mjs",
-              "tailwind.config.cjs",
-              "tailwind.config.js",
-              "tailwind.config.ts",
-              "postcss.config.js",
-              "config/tailwind.config.js",
-              "assets/tailwind.config.js",
-              "apps/**/assets/tailwind.config.js"
-            )
-            return root_pattern(fname)
-          end,
-          init_options = {
-            userLanguages = {
-              heex = "html",
-              elixir = "html",
-            },
-          },
-          settings = {
-            tailwindCSS = {
-              experimental = {
-                classRegex = {
-                  'class[:]\\s*"([^"]*)"',
-                },
-              },
-            },
-          },
-        },
-      },
-    },
-  },
+  -- {
+  --   "AstroNvim/astrolsp",
+  --   optional = false,
+  --   opts = {
+  --     config = {
+  --       tailwindcss = {
+  --         root_dir = function(fname)
+  --           local root_pattern = require("lspconfig").util.root_pattern(
+  --             "tailwind.config.js",
+  --             "assets/tailwind.config.js",
+  --             "apps/api/assets/tailwind.config.cjs" -- this is for an umbrella elixir project
+  --           )
+  --           return root_pattern(fname)
+  --         end,
+  --         init_options = {
+  --           userLanguages = {
+  --             heex = "html-eex",
+  --             elixir = "html-eex",
+  --           },
+  --         },
+  --         settings = {
+  --           tailwindCSS = {
+  --             experimental = {
+  --               classRegex = {
+  --                 'class[:]\\s*"([^"]*)"',
+  --               },
+  --             },
+  --           },
+  --         },
+  --       },
+  --     },
+  --   },
+  -- },
 }

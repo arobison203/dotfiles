@@ -9,7 +9,6 @@ return {
         "lua_ls",
         "elixirls",
         "eslint",
-        "tailwindcss",
         -- add more arguments for adding more language servers
       },
     },
