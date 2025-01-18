@@ -9,7 +9,7 @@ return {
   ---@type AstroCoreOpts
   opts = {
     options = {
-      opt = { -- vim.opt.<key>
+      opt = {        -- vim.opt.<key>
         wrap = true, -- sets vim.opt.wrap
       },
     },
@@ -18,7 +18,11 @@ return {
     mappings = {
       -- first key is the mode
       n = {
-        ["x"] = '"_x'
+        ["x"] = '"_x',
+      },
+      v = {
+        ["<"] = "<gv",
+        [">"] = ">gv",
       },
     },
   },
