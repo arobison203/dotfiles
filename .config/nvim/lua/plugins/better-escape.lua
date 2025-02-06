@@ -6,10 +6,10 @@ return {
       mappings = {
         i = {
           k = {
-            j = "<Esc>"
-          }
-        }
-      }
+            j = "<Esc>",
+          },
+        },
+      },
     })
   end,
 }
