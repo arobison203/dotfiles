@@ -26,6 +26,7 @@ source $ZSH/oh-my-zsh.sh
 # make vim the default editor
 export EDITOR='vim'
 alias n="nvim"
+alias nd='NVIM_APPNAME="nvim-kickstart" nvim'
 alias df="yadm"
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
