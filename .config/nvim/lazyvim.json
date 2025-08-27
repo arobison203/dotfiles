@@ -1,12 +1,12 @@
 {
   "extras": [
-    "lazyvim.plugins.extras.ai.copilot",
     "lazyvim.plugins.extras.coding.mini-surround",
-    "lazyvim.plugins.extras.lang.elixir",
-    "lazyvim.plugins.extras.util.mini-hipatterns"
+    "lazyvim.plugins.extras.formatting.prettier",
+    "lazyvim.plugins.extras.lang.elixir"
   ],
+  "install_version": 8,
   "news": {
     "NEWS.md": "10960"
   },
-  "version": 7
+  "version": 8
 }
