@@ -24,7 +24,8 @@ zstyle ':omz:update' mode auto      # update automatically without asking
 source $ZSH/oh-my-zsh.sh
 
 # make vim the default editor
-export EDITOR='vim'
+export EDITOR='nvim'
+alias vim="nvim"
 alias n="nvim"
 alias nd='NVIM_APPNAME="nvim-kickstart" nvim'
 alias df="yadm"
