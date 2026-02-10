@@ -1,2 +1,3 @@
-theme = "Catppuccin Mocha"
+theme = Catppuccin Mocha
 font-family = NotoSansM Nerd Font Mono
+keybind = shift+enter=text:\x1b\r

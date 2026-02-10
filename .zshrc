@@ -28,7 +28,10 @@ export EDITOR='nvim'
 alias vim="nvim"
 alias n="nvim"
 alias nd='NVIM_APPNAME="nvim-kickstart" nvim'
+alias vim='NVIM_APPNAME="kvim" nvim'
 alias df="yadm"
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+
+. "$HOME/.local/bin/env"
