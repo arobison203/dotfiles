@@ -1,0 +1,81 @@
+// Zed settings
+//
+// For information on how to configure Zed, see the Zed
+// documentation: https://zed.dev/docs/configuring-zed
+//
+// To see all of Zed's default settings without changing your
+// custom settings, run `zed: open default settings` from the
+// command palette (cmd-shift-p / ctrl-shift-p)
+{
+  "git_panel": {
+    "tree_view": true
+  },
+  "project_panel": {
+    "hide_hidden": false
+  },
+  "edit_predictions": {
+    "mode": "eager"
+  },
+  "features": {
+    "edit_prediction_provider": "copilot"
+  },
+  "code_actions_on_format": {
+    "source.fixAll.eslint": true
+  },
+  "ssh_connections": [
+    {
+      "host": "10.203.20.104",
+      "username": "sg",
+      "args": [],
+      "projects": [
+        {
+          "paths": ["/home/sg/a-silly-discord-bot"]
+        }
+      ]
+    }
+  ],
+  "context_servers": {
+    "tidewave": {
+      "enabled": true,
+      "command": "mcp-proxy",
+      "args": ["http://localhost:4000/tidewave/mcp"],
+      "env": {}
+    }
+  },
+  "agent": {
+    "always_allow_tool_actions": true,
+    "default_model": {
+      "provider": "zed.dev",
+      "model": "gemini-2.5-flash"
+    },
+    "default_profile": "write",
+    "model_parameters": []
+  },
+  "icon_theme": "Catppuccin Mocha",
+  "vim_mode": true,
+  "ui_font_size": 16,
+  "buffer_font_size": 14,
+  "theme": {
+    "mode": "system",
+    "light": "One Light",
+    "dark": "Catppuccin Mocha - No Italics"
+  },
+  "ui_font_family": "NotoMono Nerd Font Mono",
+  "buffer_font_family": "NotoMono Nerd Font Mono",
+  "relative_line_numbers": "enabled",
+  "indent_guides": {
+    "enabled": true,
+    "coloring": "indent_aware"
+  },
+  "soft_wrap": "editor_width",
+  "language_models": {
+    "ollama": {
+      "api_url": "http://localhost:11434"
+    }
+  },
+  "languages": {
+    "CSS": {
+      "language_servers": ["tailwind-language-server"]
+    }
+  }
+}
