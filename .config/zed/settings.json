@@ -14,10 +14,8 @@
     "hide_hidden": false
   },
   "edit_predictions": {
+    "provider": "copilot",
     "mode": "eager"
-  },
-  "features": {
-    "edit_prediction_provider": "copilot"
   },
   "code_actions_on_format": {
     "source.fixAll.eslint": true
