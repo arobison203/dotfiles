@@ -8,72 +8,118 @@
 // command palette (cmd-shift-p / ctrl-shift-p)
 {
   "git_panel": {
-    "tree_view": true
+    "tree_view": true,
   },
   "project_panel": {
-    "hide_hidden": false
+    "hide_hidden": false,
   },
   "edit_predictions": {
     "provider": "copilot",
-    "mode": "eager"
+    "mode": "eager",
   },
   "code_actions_on_format": {
-    "source.fixAll.eslint": true
+    "source.fixAll.eslint": true,
   },
-  "ssh_connections": [
-    {
-      "host": "10.203.20.104",
-      "username": "sg",
-      "args": [],
-      "projects": [
-        {
-          "paths": ["/home/sg/a-silly-discord-bot"]
-        }
-      ]
-    }
-  ],
-  "context_servers": {
-    "tidewave": {
-      "enabled": true,
-      "command": "mcp-proxy",
-      "args": ["http://localhost:4000/tidewave/mcp"],
-      "env": {}
-    }
-  },
-  "agent": {
-    "always_allow_tool_actions": true,
-    "default_model": {
-      "provider": "zed.dev",
-      "model": "gemini-2.5-flash"
-    },
-    "default_profile": "write",
-    "model_parameters": []
-  },
-  "icon_theme": "Catppuccin Mocha",
-  "vim_mode": true,
-  "ui_font_size": 16,
-  "buffer_font_size": 14,
-  "theme": {
-    "mode": "system",
-    "light": "One Light",
-    "dark": "Catppuccin Mocha - No Italics"
-  },
-  "ui_font_family": "NotoMono Nerd Font Mono",
-  "buffer_font_family": "NotoMono Nerd Font Mono",
   "relative_line_numbers": "enabled",
   "indent_guides": {
     "enabled": true,
-    "coloring": "indent_aware"
+    "coloring": "indent_aware",
   },
   "soft_wrap": "editor_width",
   "language_models": {
     "ollama": {
-      "api_url": "http://localhost:11434"
-    }
+      "api_url": "http://localhost:11434",
+    },
   },
   "languages": {
     "CSS": {
-      "language_servers": ["tailwind-language-server"]
-    }
-  }
+      "language_servers": ["tailwind-language-server"],
+    },
+  },
+  "agent_servers": {
+    "opencode": {
+      "type": "registry",
+    },
+  },
+  "inlay_hints": {
+    "enabled": true,
+  },
+  "buffer_font_features": {
+    "calt": 0,
+  },
+  "buffer_font_family": "NotoSansM Nerd Font",
+  "ui_font_family": "Noto Sans",
+  "telemetry": {
+    "diagnostics": false,
+    "metrics": false,
+  },
+  "icon_theme": {
+    "mode": "dark",
+    "light": "Zed (Default)",
+    "dark": "Catppuccin Mocha",
+  },
+  "vim_mode": true,
+  "ui_font_size": 16.0,
+  "buffer_font_size": 15,
+  "theme": {
+    "mode": "dark",
+    "light": "One Light",
+    "dark": "Catppuccin Mocha - No Italics",
+  },
+  "lsp": {
+    "vtsls": {
+      "settings": {
+        // For JavaScript:
+        "javascript": {
+          "inlayHints": {
+            "parameterNames": {
+              "enabled": "none",
+              "suppressWhenArgumentMatchesName": true,
+            },
+            "parameterTypes": {
+              "enabled": false,
+            },
+            "variableTypes": {
+              "enabled": false,
+              "suppressWhenTypeMatchesName": true,
+            },
+            "propertyDeclarationTypes": {
+              "enabled": false,
+            },
+            "functionLikeReturnTypes": {
+              "enabled": false,
+            },
+            "enumMemberValues": {
+              "enabled": false,
+            },
+          },
+        },
+        // For TypeScript:
+        "typescript": {
+          "inlayHints": {
+            "parameterNames": {
+              "enabled": "none",
+              "suppressWhenArgumentMatchesName": true,
+            },
+            "parameterTypes": {
+              "enabled": false,
+            },
+            "variableTypes": {
+              "enabled": false,
+              "suppressWhenTypeMatchesName": true,
+            },
+            "propertyDeclarationTypes": {
+              "enabled": false,
+            },
+            "functionLikeReturnTypes": {
+              "enabled": false,
+            },
+            "enumMemberValues": {
+              "enabled": false,
+            },
+          },
+        },
+      },
+    },
+  },
 }
