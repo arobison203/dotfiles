@@ -33,7 +33,14 @@
   },
   "languages": {
     "CSS": {
-      "language_servers": ["tailwind-language-server"],
+      "language_servers": [
+        "tailwind-language-server"
+      ],
+    },
+    "JSONC": {
+      "prettier": {
+        "allowed": false,
+      },
     },
   },
   "agent_servers": {
