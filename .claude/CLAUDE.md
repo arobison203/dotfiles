@@ -1,0 +1,1 @@
+/Users/alr/.config/opencode/AGENTS.md
