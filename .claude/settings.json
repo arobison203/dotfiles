@@ -1,10 +1,17 @@
 {
+  "attribution": {
+    "commit": "",
+    "pr": ""
+  },
   "statusLine": {
     "type": "command",
     "command": "bash /Users/alr/.claude/statusline-command.sh"
   },
-  "attribution": {
-    "commit": "",
-    "pr": ""
-  }
+  "enabledPlugins": {
+    "superpowers@claude-plugins-official": false,
+    "clangd-lsp@claude-plugins-official": true
+  },
+  "voiceEnabled": true,
+  "autoDreamEnabled": false,
+  "skipDangerousModePermissionPrompt": true
 }

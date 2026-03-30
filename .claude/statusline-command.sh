@@ -52,20 +52,19 @@ ctx_used_k=$(( ctx_used / 1000 ))
 
 if [ -n "$used_pct" ]; then
   used_pct_int=$(printf "%.0f" "$used_pct")
-  if [ "$used_pct_int" -ge 80 ]; then
-    ctx_color="${red}"
-    ctx_icon="\xe2\x96\x93"  # dark shade
-  elif [ "$used_pct_int" -ge 50 ]; then
-    ctx_color="${yellow}"
-    ctx_icon="\xe2\x96\x92"  # medium shade
-  elif [ "$used_pct_int" -ge 25 ]; then
-    ctx_color="${white}"
-    ctx_icon="\xe2\x96\x91"  # light shade
-  else
-    ctx_color="${green}"
-    ctx_icon="\xe2\x96\x91"  # light shade
-  fi
-  ctx_str="${ctx_color}${ctx_icon} ${ctx_used_k}k/${ctx_size_k}k (${used_pct_int}%)${reset}"
+  filled=$(( used_pct_int / 10 ))
+  empty=$(( 10 - filled ))
+  bar=""
+  # filled blocks: green < 50, yellow < 80, red >= 80
+  if [ "$used_pct_int" -ge 80 ]; then fill_color="${red}"
+  elif [ "$used_pct_int" -ge 50 ]; then fill_color="${yellow}"
+  else fill_color="${green}"; fi
+  for ((i=0; i<filled; i++)); do bar+="\xe2\x96\x88"; done
+  filled_bar="${fill_color}${bar}${reset}"
+  bar=""
+  for ((i=0; i<empty; i++)); do bar+="\xe2\x96\x88"; done
+  empty_bar="${dim}${bar}${reset}"
+  ctx_str="${filled_bar}${empty_bar} ${ctx_used_k}k/${ctx_size_k}k (${used_pct_int}%)"
 else
   ctx_str="${dim}--${reset}"
 fi
@@ -139,44 +138,56 @@ if [ -n "$usage_json" ]; then
     elif [ "$seven_int" -ge 50 ]; then seven_color="${yellow}"
     else seven_color="${green}"; fi
 
-    # Calculate time until reset
-    time_until() {
-      local reset_ts now_ts diff_s hours mins
-      # Use python to handle ISO 8601 with timezone correctly
-      reset_ts=$(python3 -c "
-from datetime import datetime, timezone
-import sys
-try:
-    dt = datetime.fromisoformat(sys.argv[1])
-    print(int(dt.timestamp()))
-except: pass
-" "$1" 2>/dev/null)
-      [ -z "$reset_ts" ] && return
-      now_ts=$(date +%s)
-      diff_s=$(( reset_ts - now_ts ))
-      [ "$diff_s" -le 0 ] && echo "now" && return
-      hours=$(( diff_s / 3600 ))
-      mins=$(( (diff_s % 3600) / 60 ))
-      if [ "$hours" -gt 24 ]; then
-        local days=$(( hours / 24 ))
-        hours=$(( hours % 24 ))
-        echo "${days}d${hours}h"
-      elif [ "$hours" -gt 0 ]; then
-        echo "${hours}h${mins}m"
-      else
-        echo "${mins}m"
+    # Minutes remaining until reset (jq strips microseconds, converts to epoch)
+    mins_remaining() {
+      local reset_at="$1"
+      local reset_epoch now_epoch
+      reset_epoch=$(jq -rn --arg t "$reset_at" '$t | gsub("\\.[0-9]+\\+00:00$"; "Z") | fromdateiso8601')
+      now_epoch=$(date +%s)
+      echo $(( (reset_epoch - now_epoch) / 60 ))
+    }
+
+    # Human-readable time until reset
+    fmt_ttl() {
+      local rm="$1"
+      if [ "$rm" -le 0 ]; then echo "now"
+      elif [ "$rm" -ge 1440 ]; then echo "$(( rm / 1440 ))d$(( (rm % 1440) / 60 ))h"
+      elif [ "$rm" -ge 60 ]; then echo "$(( rm / 60 ))h$(( rm % 60 ))m"
+      else echo "${rm}m"
       fi
     }
 
-    five_ttl=$(time_until "$five_reset")
-    seven_ttl=$(time_until "$seven_reset")
+    # Pace delta: usage% - elapsed%
+    # d = u - (w - rm) * 100 / w
+    pace_delta() {
+      local u="$1" w="$2" rm="$3"
+      [ "$rm" -lt 0 ] && rm=0
+      echo $(( u - (w - rm) * 100 / w ))
+    }
 
-    five_reset_str=""
-    [ -n "$five_ttl" ] && five_reset_str="${dim}@${five_ttl}${reset}"
-    seven_reset_str=""
-    [ -n "$seven_ttl" ] && seven_reset_str="${dim}@${seven_ttl}${reset}"
+    fmt_delta() {
+      local d="$1"
+      if [ "$d" -gt 0 ]; then
+        printf "${red}\xe2\x86\x91%d%%${reset}" "$d"
+      elif [ "$d" -lt 0 ]; then
+        printf "${green}\xe2\x86\x93%d%%${reset}" "$(( -d ))"
+      fi
+    }
 
-    usage_str="${dim}5h:${reset}${five_color}${five_int}%${reset}${five_reset_str} ${dim}7d:${reset}${seven_color}${seven_int}%${reset}${seven_reset_str}"
+    five_rm=$(mins_remaining "$five_reset")
+    seven_rm=$(mins_remaining "$seven_reset")
+
+    five_ttl=$(fmt_ttl "$five_rm")
+    seven_ttl=$(fmt_ttl "$seven_rm")
+
+    five_d=$(pace_delta "$five_int" 300 "$five_rm")
+    seven_d=$(pace_delta "$seven_int" 10080 "$seven_rm")
+
+    five_delta_str=$(fmt_delta "$five_d")
+    seven_delta_str=$(fmt_delta "$seven_d")
+
+    # 5h 3% v39% 2h53m · 7d 4% v89% 1d20h
+    usage_str="${dim}5h${reset} ${five_color}${five_int}%${reset} ${five_delta_str} ${dim}${five_ttl}${reset} ${dot} ${dim}7d${reset} ${seven_color}${seven_int}%${reset} ${seven_delta_str} ${dim}${seven_ttl}${reset}"
   fi
 fi
 
@@ -266,31 +277,34 @@ if [ -n "$wt_name" ]; then
 fi
 
 # ── assemble ─────────────────────────────────────────────────────────────────
-parts=()
+line1=()
+line2=()
 
-# left group: location + git
-parts+=("${blue}${short_cwd}${reset}")
-[ -n "$git_str" ] && parts+=("$git_str")
-[ -n "$worktree_str" ] && parts+=("$worktree_str")
+# line 1: location + git + worktree + model + mcp + vim
+line1+=("${blue}${short_cwd}${reset}")
+[ -n "$git_str" ] && line1+=("$git_str")
+[ -n "$worktree_str" ] && line1+=("$worktree_str")
+line1+=("${dim}${model}${reset}")
+[ -n "$mcp_str" ] && line1+=("$mcp_str")
+[ -n "$vim_str" ] && line1+=("$vim_str")
 
-# middle group: model + context + cost + speed
-model_group="${dim}${model}${reset} ${ctx_str}"
-[ -n "$cost_str" ] && model_group+=" ${dot} ${cost_str}"
-[ -n "$speed_str" ] && model_group+=" ${dot} ${speed_str}"
-parts+=("$model_group")
+# line 2: context window + cost + speed + usage limits
+ctx_group="${ctx_str}"
+[ -n "$cost_str" ] && ctx_group+=" ${dot} ${cost_str}"
+[ -n "$speed_str" ] && ctx_group+=" ${dot} ${speed_str}"
+line2+=("$ctx_group")
+[ -n "$usage_str" ] && line2+=("$usage_str")
 
-# usage limits
-[ -n "$usage_str" ] && parts+=("$usage_str")
+# join each line with separator
+join_parts() {
+  local out=""
+  for part in "$@"; do
+    [ -n "$out" ] && out+="${sep}"
+    out+="$part"
+  done
+  echo -n "$out"
+}
 
-# right group: mcp + vim
-[ -n "$mcp_str" ] && parts+=("$mcp_str")
-[ -n "$vim_str" ] && parts+=("$vim_str")
-
-# join with separator
-output=""
-for i in "${!parts[@]}"; do
-  [ $i -gt 0 ] && output+="${sep}"
-  output+="${parts[$i]}"
-done
+output="$(join_parts "${line1[@]}")\n$(join_parts "${line2[@]}")"
 
 printf "%b" "$output"
