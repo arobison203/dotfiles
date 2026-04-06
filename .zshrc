@@ -24,10 +24,14 @@ zstyle ':omz:update' mode auto      # update automatically without asking
 source $ZSH/oh-my-zsh.sh
 
 # make vim the default editor
-export EDITOR='nvim'
-alias vim="nvim"
+export EDITOR='vim'
+# alias vim="nvim"
 alias n="nvim"
 alias df="yadm"
+alias cl="claude"
+alias cld="claude --dangerously-skip-permissions"
+alias clw="claude -w"
+alias cldw="claude --dangerously-skip-permissions -w"
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh

@@ -50,42 +50,34 @@ ctx_used=$(( input_t + cache_create + cache_read ))
 ctx_size_k=$(( ctx_size / 1000 ))
 ctx_used_k=$(( ctx_used / 1000 ))
 
-if [ -n "$used_pct" ]; then
-  used_pct_int=$(printf "%.0f" "$used_pct")
-  filled=$(( used_pct_int / 10 ))
-  empty=$(( 10 - filled ))
-  bar=""
-  # filled blocks: green < 50, yellow < 80, red >= 80
-  if [ "$used_pct_int" -ge 80 ]; then fill_color="${red}"
-  elif [ "$used_pct_int" -ge 50 ]; then fill_color="${yellow}"
-  else fill_color="${green}"; fi
-  for ((i=0; i<filled; i++)); do bar+="\xe2\x96\x88"; done
-  filled_bar="${fill_color}${bar}${reset}"
-  bar=""
-  for ((i=0; i<empty; i++)); do bar+="\xe2\x96\x88"; done
-  empty_bar="${dim}${bar}${reset}"
-  ctx_str="${filled_bar}${empty_bar} ${ctx_used_k}k/${ctx_size_k}k (${used_pct_int}%)"
-else
-  ctx_str="${dim}--${reset}"
-fi
+used_pct_int=0
+[ -n "$used_pct" ] && used_pct_int=$(printf "%.0f" "$used_pct")
+filled=$(( used_pct_int / 10 ))
+empty=$(( 10 - filled ))
+bar=""
+# filled blocks: green < 50, yellow < 80, red >= 80
+if [ "$used_pct_int" -ge 80 ]; then fill_color="${red}"
+elif [ "$used_pct_int" -ge 50 ]; then fill_color="${yellow}"
+else fill_color="${green}"; fi
+for ((i=0; i<filled; i++)); do bar+="\xe2\x96\x88"; done
+filled_bar="${fill_color}${bar}${reset}"
+bar=""
+for ((i=0; i<empty; i++)); do bar+="\xe2\x96\x88"; done
+empty_bar="${dim}${bar}${reset}"
+ctx_str="${filled_bar}${empty_bar} ${ctx_used_k}k/${ctx_size_k}k (${used_pct_int}%)"
 
 # ── cost estimate ────────────────────────────────────────────────────────────
-cost_str=""
-if [ "$total_in" -gt 0 ] || [ "$total_out" -gt 0 ]; then
-  # Use cost.total_cost_usd if available and non-zero, otherwise calculate
-  cost=$(awk -v tc="$total_cost" -v inp="$total_in" -v out="$total_out" \
-    -v cc="$cache_create" -v cr="$cache_read" \
-    'BEGIN {
-      if (tc + 0 > 0) {
-        printf "%.2f", tc
-      } else {
-        # Opus 4 rates: $15/M in, $18.75/M cache write, $1.50/M cache read, $75/M out
-        cost = (inp * 15.0 + cc * 18.75 + cr * 1.50 + out * 75.0) / 1000000
-        printf "%.2f", cost
-      }
-    }')
-  cost_str="${dim}\$${reset}${white}${cost}${reset}"
-fi
+cost=$(awk -v tc="$total_cost" -v inp="$total_in" -v out="$total_out" \
+  -v cc="$cache_create" -v cr="$cache_read" \
+  'BEGIN {
+    if (tc + 0 > 0) {
+      printf "%.2f", tc
+    } else {
+      cost = (inp * 15.0 + cc * 18.75 + cr * 1.50 + out * 75.0) / 1000000
+      printf "%.2f", cost
+    }
+  }')
+cost_str="${dim}\$${reset}${white}${cost}${reset}"
 
 # ── usage limits (5hr / 7day) ────────────────────────────────────────────────
 usage_str=""
@@ -171,6 +163,8 @@ if [ -n "$usage_json" ]; then
         printf "${red}\xe2\x86\x91%d%%${reset}" "$d"
       elif [ "$d" -lt 0 ]; then
         printf "${green}\xe2\x86\x93%d%%${reset}" "$(( -d ))"
+      else
+        printf "${green}\xe2\x86\x930%%${reset}"
       fi
     }
 
@@ -192,12 +186,12 @@ if [ -n "$usage_json" ]; then
 fi
 
 # ── token speed ──────────────────────────────────────────────────────────────
-speed_str=""
-if [ "$api_duration" -gt 0 ] && [ "$total_out" -gt 0 ]; then
-  speed=$(awk -v tokens="$total_out" -v ms="$api_duration" \
-    'BEGIN { printf "%.0f", (tokens / ms) * 1000 }')
-  speed_str="${dim}${speed} tok/s${reset}"
-fi
+speed=$(awk -v tokens="$total_out" -v ms="$api_duration" \
+  'BEGIN {
+    if (ms + 0 > 0) printf "%.0f", (tokens / ms) * 1000
+    else printf "0"
+  }')
+speed_str="${dim}${speed} tok/s${reset}"
 
 # ── git info ─────────────────────────────────────────────────────────────────
 git_str=""

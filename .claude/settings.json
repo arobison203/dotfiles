@@ -9,7 +9,16 @@
   },
   "enabledPlugins": {
     "superpowers@claude-plugins-official": false,
-    "clangd-lsp@claude-plugins-official": true
+    "clangd-lsp@claude-plugins-official": true,
+    "openchart@opendata-skills": true
+  },
+  "extraKnownMarketplaces": {
+    "opendata-skills": {
+      "source": {
+        "source": "github",
+        "repo": "tryopendata/skills"
+      }
+    }
   },
   "voiceEnabled": true,
   "autoDreamEnabled": false,
